@@ -1,6 +1,6 @@
 {
-	"name" : "backbone-tmpl",
-	"version" : "1.0.0",
+	"name" : "yo",
+	"version" : "0.1.0",
 	"dependencies" : {
 		"jquery" : "*",
 		"backbone-amd" : "*",

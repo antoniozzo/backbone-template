@@ -6,42 +6,55 @@ module.exports = function (grunt) {
 
 		options: {
 
-			publish: 'app',
-			assets: '<%= options.publish %>',
+			dist: 'dist',
+			src: 'src',
+			tmp: 'tmp',
 
-			clean: {
-				css: ['<%= options.css.min %>', '<%= options.css.legacssy %>'],
-				tmp: ['<%= options.css.concat %>', '<%= options.css.base %>/styles.css', '<%= options.css.base %>/**/*-sprites.css']
+			less: {
+				src: '<%= options.src %>/less',
+				dist: '<%= options.css.src %>/styles.css',
+				file: '<%= options.less.src %>/styles.less'
 			},
 
 			css: {
-				base: '<%= options.assets %>/css',
-				files: ['<%= options.css.base %>/**/*.css'],
-				concat: '<%= options.css.base %>/concat.css',
-				min: '<%= options.css.base %>/app.min.css',
-				legacssy: '<%= options.css.base %>/app.ie.css'
-			},
-
-			less: {
-				base: '<%= options.assets %>/less',
-				file: '<%= options.less.base %>/styles.less',
-				compiled: '<%= options.css.base %>/styles.css'
+				src: '<%= options.src %>/css',
+				dist: '<%= options.dist %>/css',
+				files: ['<%= options.css.src %>/**/*.css'],
+				concat: '<%= options.tmp %>/concat.css',
+				min: '<%= options.css.dist %>/app.min.css',
+				legacssy: '<%= options.css.dist %>/app.ie.css'
 			},
 
 			svg: {
-				dir: '<%= options.assets %>/img/svg',
-				files: ['<%= options.svg.dir %>/**/*.svg'],
-				min: '<%= options.assets %>/img/sprites',
-				css: '<%= options.css.base %>'
-			}
+				src: '<%= options.src %>/img/svg',
+				dist: '<%= options.dist %>/img/sprites',
+				files: ['<%= options.svg.src %>/**/*.svg'],
+				css: '<%= options.css.src %>'
+			},
+
 		},
 
 		clean: {
 			css: {
-				src: '<%= options.clean.css %>'
+				src: '<%= options.css.dist %>'
+			},
+			svg: {
+				src: ['<%= options.svg.dist %>', '<%= options.css.src %>/*-sprites.css']
 			},
 			tmp: {
-				src: '<%= options.clean.tmp %>'
+				src: '<%= options.tmp %>'
+			}
+		},
+
+		less: {
+			main: {
+				options: {
+					yuicompress: true,
+					ieCompat: true
+				},
+				files: {
+					'<%= options.less.dist %>': '<%= options.less.file %>'
+				}
 			}
 		},
 
@@ -60,24 +73,14 @@ module.exports = function (grunt) {
 			}
 		},
 
-		less: {
-			main: {
-				options: {
-					yuicompress: true,
-					ieCompat: true
-				},
-				files: {
-					'<%= options.less.compiled %>': '<%= options.less.file %>'
-				}
-			}
-		},
-
 		'svg-sprites': {
 			options: {
-				spriteElementPath: '<%= options.svg.dir %>',
-				spritePath: '<%= options.svg.min %>',
+				spriteElementPath: '<%= options.svg.src %>',
+				spritePath: '<%= options.svg.dist %>',
 				cssPath: '<%= options.svg.css %>'
 			},
+
+			/*
 			icons: {
 				options: {
 					sizes: {
@@ -98,6 +101,8 @@ module.exports = function (grunt) {
 					refSize: 75
 				}
 			}
+			*/
+		
 		},
 
 		legacssy: {
@@ -116,8 +121,12 @@ module.exports = function (grunt) {
 				files: ['<%= options.svg.files %>'],
 				tasks: ['svg']
 			},
+			less: {
+				files: ['<%= options.less.file %>'],
+				tasks: ['less']
+			},
 			css: {
-				files: ['<%= options.less.base %>/*.less', '!<%= options.less.compiled %>', '!<%= options.css.concat %>'],
+				files: ['<%= options.css.files %>'],
 				tasks: ['css']
 			}
 		}
@@ -134,6 +143,6 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-legacssy');
 
 	grunt.registerTask('default', 'watch');
-	grunt.registerTask('svg', ['clean:css', 'svg-sprites', 'concat:css', 'cssmin', 'legacssy', 'clean:tmp']);
-	grunt.registerTask('css', ['clean:css', 'less', 'concat:css', 'cssmin', 'legacssy', 'clean:tmp']);
+	grunt.registerTask('svg', ['clean:svg', 'svg-sprites']);
+	grunt.registerTask('css', ['clean:css', 'concat:css', 'cssmin', 'legacssy', 'clean:tmp']);
 }
