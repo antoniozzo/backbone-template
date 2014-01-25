@@ -1,0 +1,10 @@
+{
+	"name" : "backbone-tmpl",
+	"version" : "1.0.0",
+	"dependencies" : {
+		"jquery" : "*",
+		"backbone-amd" : "*",
+		"underscore-amd" : "*",
+		"requirejs" : "*"
+	}
+}
